@@ -9,8 +9,6 @@ double Matrix::operator()(int i, int j) const {
 }
 
 Matrix operator*(const Matrix& A, const Matrix& B) {
-    // 1. Validar dimensiones (Fundamental en Deep Learning)
-    // El número de columnas de A debe ser igual al número de filas de B
     if (A.cols != B.rows) {
         throw std::invalid_argument("Dimensiones incompatibles para multiplicacion");
     }
@@ -18,7 +16,7 @@ Matrix operator*(const Matrix& A, const Matrix& B) {
     Matrix result(A.rows, B.cols);
     for (int i = 0; i < A.rows; ++i) {
         for (int k = 0; k < A.cols; ++k) {
-            double temp = A(i, k); // Guardas el valor en un registro
+            double temp = A(i, k);
             for (int j = 0; j < B.cols; ++j) {
                 result(i, j) += temp * B(k, j);
             }
@@ -56,7 +54,6 @@ std::ostream& operator<<(std::ostream& os, const Matrix& m) {
     for (int i = 0; i < m.rows; ++i) {
         os << "[ ";
         for (int j = 0; j < m.cols; ++j) {
-            // Usamos el operador () que ya definiste
             os << m(i, j) << " ";
         }
         os << "]\n";
