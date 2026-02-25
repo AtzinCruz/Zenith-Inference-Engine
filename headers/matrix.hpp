@@ -19,8 +19,10 @@ class Matrix{
     
     //Multiplication operators
     friend Matrix operator*(const Matrix& A, const Matrix& B);
+    Matrix& operator*=(const Matrix& other);
     friend Matrix operator*(const Matrix& A, double scalar);
     friend Matrix operator*(double scalar, const Matrix& A);
+    Matrix& operator*=(double scalar);
     //Basic operators
     friend Matrix operator+(const Matrix& A, const Matrix& B);
     friend Matrix operator-(const Matrix& A, const Matrix& B);
@@ -36,6 +38,7 @@ class Matrix{
 
     //Special functions
     Matrix transpose() const;
+    Matrix transpose_() const;
 };
 
 #endif

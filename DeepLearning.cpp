@@ -14,8 +14,12 @@ int main() {
 
     Matrix result = A * B;
     std::cout << result;
-    Matrix t = A.transpose();
+    A *= B;
     std::cout << A;
+    Matrix t = B.transpose();
+    B *= 0.1;
+    std::cout << B;
     std::cout << t;
+    
     return 0;
 }

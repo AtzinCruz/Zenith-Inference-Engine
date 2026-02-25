@@ -1,6 +1,7 @@
 #include "../headers/matrix.hpp"
 #include <stdexcept>
 #include <ostream>
+#include <utility>
 
 double& Matrix::operator()(int i, int j) {
     return data[i * cols + j];
@@ -33,6 +34,22 @@ Matrix operator*(const Matrix& A, const Matrix& B) {
     return result;
 }
 
+Matrix& Matrix::operator*=(const Matrix& other){
+    if (cols != other.rows) {
+        throw std::invalid_argument("Dimensiones incompatibles para multiplicacion");
+    }
+    
+    // Crear matriz temporal con el resultado
+    Matrix temp = (*this) * other;
+    
+    // Actualizar dimensiones y datos
+    cols = temp.cols;
+    rows = temp.rows;
+    data = std::move(temp.data);
+    
+    return *this;
+}
+
 Matrix operator*(const Matrix& A, double scalar){
     Matrix result(A.rows, A.cols);
     for(int i = 0; i < A.rows * A.cols; ++i){
@@ -42,6 +59,13 @@ Matrix operator*(const Matrix& A, double scalar){
 }
 Matrix operator*(double scalar, const Matrix& A){
     return A * scalar;
+}
+
+Matrix& Matrix::operator*=(double scalar){
+    for(int i = 0; i < rows * cols; ++i){
+        this->data[i] *= scalar;
+    }
+    return *this;
 }
 
 /*
@@ -129,6 +153,5 @@ Matrix Matrix::transpose() const{
             result(j, i) = (*this)(i, j);
         }
     }
-
     return result;
 }
