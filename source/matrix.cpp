@@ -1,4 +1,6 @@
 #include "../headers/matrix.hpp"
+#include <stdexcept>
+#include <ostream>
 
 double& Matrix::operator()(int i, int j) {
     return data[i * cols + j];
@@ -7,6 +9,12 @@ double& Matrix::operator()(int i, int j) {
 double Matrix::operator()(int i, int j) const {
     return data[i * cols + j];
 }
+
+/*
+
+    Multiplication operators
+
+*/
 
 Matrix operator*(const Matrix& A, const Matrix& B) {
     if (A.cols != B.rows) {
@@ -24,6 +32,23 @@ Matrix operator*(const Matrix& A, const Matrix& B) {
     }
     return result;
 }
+
+Matrix operator*(const Matrix& A, double scalar){
+    Matrix result(A.rows, A.cols);
+    for(int i = 0; i < A.rows * A.cols; ++i){
+        result.data[i] = A.data[i] * scalar;
+    }
+    return result;
+}
+Matrix operator*(double scalar, const Matrix& A){
+    return A * scalar;
+}
+
+/*
+
+    Basic Operators (+, -)
+
+*/
 
 Matrix operator+(const Matrix& A, const Matrix& B){
 
@@ -48,6 +73,36 @@ Matrix operator+(const Matrix& A, const Matrix& B){
 
 }
 
+
+Matrix operator-(const Matrix& A, const Matrix& B){
+     if (A.cols != B.cols || A.rows != B.rows) {
+        throw std::invalid_argument("Dimensiones incompatibles para restar");
+    }
+        Matrix result = Matrix(A.rows, B.cols);
+
+    for(int i = 0; i < A.rows * A.cols; ++i){
+        result.data[i] = A.data[i] - B.data[i];
+    }
+    return result;
+}
+
+Matrix& Matrix::operator-=(const Matrix& other) {
+    if (cols != other.cols || rows != other.rows) {
+        throw std::invalid_argument("Dimensiones incompatibles para restar");
+    }
+    for(int i = 0; i < rows * cols; ++i){
+        data[i] -= other.data[i];
+    }
+    return *this;
+}
+
+
+/*
+
+    Ostream operators
+
+*/
+
 std::ostream& operator<<(std::ostream& os, const Matrix& m) {
     os << "Matrix(" << m.rows << "x" << m.cols << "):\n";
     
@@ -59,4 +114,21 @@ std::ostream& operator<<(std::ostream& os, const Matrix& m) {
         os << "]\n";
     }
     return os;
+}
+
+/*
+
+    Special functions
+
+*/
+
+Matrix Matrix::transpose() const{
+    Matrix result(cols, rows);
+    for(int i = 0; i < rows; ++i){
+        for(int j = 0; j < cols; ++j){
+            result(j, i) = (*this)(i, j);
+        }
+    }
+
+    return result;
 }
