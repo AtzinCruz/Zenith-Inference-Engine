@@ -38,7 +38,7 @@ class Matrix{
 
     //Special functions
     Matrix transpose() const;
-    Matrix transpose_() const;
+    Matrix& transpose_();
 };
 
 #endif

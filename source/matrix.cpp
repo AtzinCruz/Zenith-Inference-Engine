@@ -155,3 +155,23 @@ Matrix Matrix::transpose() const{
     }
     return result;
 }
+
+Matrix& Matrix::transpose_(){
+    if (rows == cols) {
+        for(int i = 0; i < rows; ++i){
+            for(int j = i + 1; j < cols; ++j){
+                std::swap(data[i * cols + j], data[j * cols + i]);
+            }
+        }
+    } else {        
+        vector<double> new_data(rows * cols);
+        for(int i = 0; i < rows; ++i){
+            for(int j = 0; j < cols; ++j){
+                new_data[j * rows + i] = data[i * cols + j];
+            }
+        }
+        data = std::move(new_data);
+        std::swap(rows, cols);
+    }
+    return *this;
+}

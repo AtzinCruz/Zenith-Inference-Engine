@@ -12,14 +12,9 @@ int main() {
     B(1, 0) = 9.0; B(1, 1) = 10.0;
     B(2, 0) = 11.0; B(2, 1) = 12.0;
 
-    Matrix result = A * B;
-    std::cout << result;
-    A *= B;
-    std::cout << A;
-    Matrix t = B.transpose();
-    B *= 0.1;
-    std::cout << B;
-    std::cout << t;
+    cout << A;
+    A.transpose_();
+    cout << A;
     
     return 0;
 }
