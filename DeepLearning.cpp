@@ -13,6 +13,6 @@ int main() {
     B(2, 0) = 11.0; B(2, 1) = 12.0;
 
     Matrix result = A * B;
-    std::cout << result;S
+    std::cout << result;
     return 0;
 }
