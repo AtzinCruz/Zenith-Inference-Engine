@@ -3,13 +3,15 @@
 
 #include <vector>
 #include <iosfwd>
-
-using namespace std;
+#include <thread>
+#include <stdexcept>
+#include <ostream>
+#include <utility>
 
 class Matrix{
     private:
     int rows, cols;
-    vector<double> data;
+    std::vector<double> data;
 
     public:
     Matrix() : rows(0), cols(0), data() {}
@@ -43,12 +45,15 @@ class Matrix{
     Matrix& transpose_();
 
     // Getters
-    int get_rows() const { return rows; }
-    int get_cols() const { return cols; }
-    size_t size() const { return data.size(); }
+    inline int get_rows() const { return rows; }
+    inline int get_cols() const { return cols; }
+    std::size_t size() const { return data.size(); }
     
     // is empty?
     bool empty() const { return data.empty(); }
+
+    double* raw_data() { return data.data(); }
+    const double* raw_data() const { return data.data(); }
 };
 
 #endif
