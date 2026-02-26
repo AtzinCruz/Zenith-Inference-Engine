@@ -97,6 +97,25 @@ Matrix operator+(const Matrix& A, const Matrix& B){
 
 }
 
+Matrix& Matrix::operator+=(const Matrix& other) {
+    // Broadcasting: si other es un vector columna y this es una matriz
+    if (rows == other.rows && other.cols == 1 && cols > 1) {
+        for(int i = 0; i < rows * cols; ++i){
+            data[i] += other.data[i / cols];
+        }
+        return *this;
+    }
+    
+    // Suma normal elemento a elemento
+    if (cols != other.cols || rows != other.rows) {
+        throw std::invalid_argument("Dimensiones incompatibles para sumar");
+    }
+    for(int i = 0; i < rows * cols; ++i){
+        data[i] += other.data[i];
+    }
+    return *this;
+}
+
 
 Matrix operator-(const Matrix& A, const Matrix& B){
      if (A.cols != B.cols || A.rows != B.rows) {
@@ -111,6 +130,15 @@ Matrix operator-(const Matrix& A, const Matrix& B){
 }
 
 Matrix& Matrix::operator-=(const Matrix& other) {
+    // Broadcasting: si other es un vector columna y this es una matriz
+    if (rows == other.rows && other.cols == 1 && cols > 1) {
+        for(int i = 0; i < rows * cols; ++i){
+            data[i] -= other.data[i / cols];
+        }
+        return *this;
+    }
+    
+    // Resta normal elemento a elemento
     if (cols != other.cols || rows != other.rows) {
         throw std::invalid_argument("Dimensiones incompatibles para restar");
     }

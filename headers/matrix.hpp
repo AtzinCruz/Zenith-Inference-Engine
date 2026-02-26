@@ -12,6 +12,7 @@ class Matrix{
     vector<double> data;
 
     public:
+    Matrix() : rows(0), cols(0), data() {}
     Matrix(int r, int c) : rows(r), cols(c), data(r * c, 0.0){}
 
     double& operator() (int i, int j);
@@ -25,6 +26,7 @@ class Matrix{
     Matrix& operator*=(double scalar);
     //Basic operators
     friend Matrix operator+(const Matrix& A, const Matrix& B);
+    Matrix& operator+=(const Matrix& other);
     friend Matrix operator-(const Matrix& A, const Matrix& B);
     Matrix& operator-=(const Matrix& other);
     //Ostream operators
@@ -39,6 +41,14 @@ class Matrix{
     //Special functions
     Matrix transpose() const;
     Matrix& transpose_();
+
+    // Getters
+    int get_rows() const { return rows; }
+    int get_cols() const { return cols; }
+    size_t size() const { return data.size(); }
+    
+    // is empty?
+    bool empty() const { return data.empty(); }
 };
 
 #endif
