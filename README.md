@@ -32,8 +32,7 @@ The engine is built on three modular pillars to ensure scalability and clean cod
 Zenith-Inference-Engine/
 ├── headers/            # Interface and class definitions (.hpp)
 ├── source/             # Mathematical logic and implementations (.cpp)
-├── examples/           # Use cases and demos (XOR, Regression)
-└── build/              # Binary objects and optimized executables
+└── examples/           # Use cases and demos (XOR, Regression)
 
 ```
 
