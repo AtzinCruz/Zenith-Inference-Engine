@@ -6,15 +6,12 @@ Layer::Layer(int inputs, int neurons, bool activate)
     std::random_device rd;
     std::mt19937 gen(rd());
     
-    // He initialization para ReLU en capas ocultas
-    // Xavier para capas lineales
     double std_dev = activate ? std::sqrt(2.0 / inputs) : std::sqrt(1.0 / inputs);
     std::normal_distribution<double> dist(0.0, std_dev);
     
     for(auto &w : weights){
         w = dist(gen);
     }
-    // Biases pequeños positivos ayudan a evitar dying ReLU
     for(auto &b : biases){
         b = activate ? 0.1 : 0.0;
     }
@@ -82,8 +79,6 @@ double DL::mse_loss(const Matrix& prediction, const Matrix& target) {
 
     return error / n;
 }
-
-// Gradiente de MSE: (pred - target) - sin el factor 2 para evitar explosión
 Matrix DL::mse_gradient(const Matrix& prediction, const Matrix& target) {
     Matrix grad = prediction - target;
     return grad;

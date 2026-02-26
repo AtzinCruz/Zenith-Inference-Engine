@@ -15,7 +15,6 @@ void ReLU_derivative(Matrix& m){
 }
 
 void ReLU_derivative(Matrix& delta, const Matrix& activations) {
-    // Seguridad: verificar que las dimensiones coincidan
     if (delta.get_rows() * delta.get_cols() != activations.get_rows() * activations.get_cols()) {
         throw std::invalid_argument("Dimensiones no coinciden en ReLU_derivative");
     }
