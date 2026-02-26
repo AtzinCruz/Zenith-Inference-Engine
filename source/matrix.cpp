@@ -39,10 +39,8 @@ Matrix& Matrix::operator*=(const Matrix& other){
         throw std::invalid_argument("Dimensiones incompatibles para multiplicacion");
     }
     
-    // Crear matriz temporal con el resultado
     Matrix temp = (*this) * other;
     
-    // Actualizar dimensiones y datos
     cols = temp.cols;
     rows = temp.rows;
     data = std::move(temp.data);
@@ -98,7 +96,6 @@ Matrix operator+(const Matrix& A, const Matrix& B){
 }
 
 Matrix& Matrix::operator+=(const Matrix& other) {
-    // Broadcasting: si other es un vector columna y this es una matriz
     if (rows == other.rows && other.cols == 1 && cols > 1) {
         for(int i = 0; i < rows * cols; ++i){
             data[i] += other.data[i / cols];
@@ -130,7 +127,7 @@ Matrix operator-(const Matrix& A, const Matrix& B){
 }
 
 Matrix& Matrix::operator-=(const Matrix& other) {
-    // Broadcasting: si other es un vector columna y this es una matriz
+    
     if (rows == other.rows && other.cols == 1 && cols > 1) {
         for(int i = 0; i < rows * cols; ++i){
             data[i] -= other.data[i / cols];
@@ -138,7 +135,7 @@ Matrix& Matrix::operator-=(const Matrix& other) {
         return *this;
     }
     
-    // Resta normal elemento a elemento
+    
     if (cols != other.cols || rows != other.rows) {
         throw std::invalid_argument("Dimensiones incompatibles para restar");
     }
