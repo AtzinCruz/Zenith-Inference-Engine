@@ -1,7 +1,4 @@
 #include "../headers/matrix.hpp"
-#include <stdexcept>
-#include <ostream>
-#include <utility>
 
 double& Matrix::operator()(int i, int j) {
     return data[i * cols + j];
@@ -18,19 +15,83 @@ double Matrix::operator()(int i, int j) const {
 */
 
 Matrix operator*(const Matrix& A, const Matrix& B) {
-    if (A.cols != B.rows) {
+    if (A.get_cols() != B.get_rows()) {
         throw std::invalid_argument("Dimensiones incompatibles para multiplicacion");
     }
 
-    Matrix result(A.rows, B.cols);
-    for (int i = 0; i < A.rows; ++i) {
-        for (int k = 0; k < A.cols; ++k) {
-            double temp = A(i, k);
-            for (int j = 0; j < B.cols; ++j) {
-                result(i, j) += temp * B(k, j);
+    const int m = A.get_rows();
+    const int n = B.get_cols();
+    const int k_dim = A.get_cols();
+
+    Matrix result(m, n);  
+
+    const int PARALLEL_THRESHOLD = 128;
+    if (m < PARALLEL_THRESHOLD) {
+        const double* __restrict a = A.raw_data();
+        const double* __restrict b = B.raw_data();
+        double* __restrict r = result.raw_data();
+
+        for (int i = 0; i < m; ++i) {
+            double* r_row = r + i * n;
+            const double* a_row = a + i * k_dim;
+
+            for (int k = 0; k < k_dim; ++k) {
+                const double temp = a_row[k];
+                const double* b_row = b + k * n;
+
+                for (int j = 0; j < n; ++j) {
+                    r_row[j] += temp * b_row[j];
+                }
             }
         }
+
+        return result;
     }
+
+    // -------- MULTITHREADED --------
+
+    unsigned int num_threads = std::thread::hardware_concurrency();
+    if (num_threads == 0) num_threads = 2;
+
+    if (num_threads > static_cast<unsigned int>(m))
+        num_threads = m;
+
+    std::vector<std::thread> workers;
+    workers.reserve(num_threads);
+
+    const int rows_per_thread = m / num_threads;
+
+    const double* __restrict a = A.raw_data();
+    const double* __restrict b = B.raw_data();
+    double* __restrict r = result.raw_data();
+
+    for (unsigned int t = 0; t < num_threads; ++t) {
+        const int start_row = t * rows_per_thread;
+        const int end_row = (t == num_threads - 1)
+                            ? m
+                            : (t + 1) * rows_per_thread;
+
+        workers.emplace_back([=]() {
+            for (int i = start_row; i < end_row; ++i) {
+                double* r_row = r + i * n;
+                const double* a_row = a + i * k_dim;
+
+                for (int k = 0; k < k_dim; ++k) {
+                    const double temp = a_row[k];
+                    const double* b_row = b + k * n;
+
+                    for (int j = 0; j < n; ++j) {
+                        r_row[j] += temp * b_row[j];
+                    }
+                }
+            }
+        });
+    }
+
+    for (auto& thread : workers) {
+        thread.join();
+    }
+
     return result;
 }
 
@@ -189,7 +250,7 @@ Matrix& Matrix::transpose_(){
             }
         }
     } else {        
-        vector<double> new_data(rows * cols);
+        std::vector<double> new_data(rows * cols);
         for(int i = 0; i < rows; ++i){
             for(int j = 0; j < cols; ++j){
                 new_data[j * rows + i] = data[i * cols + j];
