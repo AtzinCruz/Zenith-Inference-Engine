@@ -261,3 +261,15 @@ Matrix& Matrix::transpose_(){
     }
     return *this;
 }
+
+Matrix Matrix::sum_cols(){
+    Matrix result(rows, 1);
+    for(int i = 0; i < rows; ++i){
+        double sum = 0.0;
+        for(int j = 0; j < cols; ++j){
+            sum += data[i * cols + j];
+        }
+        result(i, 0) = sum;
+    }
+    return result;
+}

@@ -54,6 +54,10 @@ class Matrix{
 
     double* raw_data() { return data.data(); }
     const double* raw_data() const { return data.data(); }
+
+    // Functions
+    Matrix sum_cols();
+    
 };
 
 #endif

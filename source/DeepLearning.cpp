@@ -20,27 +20,36 @@ Layer::Layer(int inputs, int neurons, bool activate)
 Matrix Layer::forward(const Matrix& input) {
     last_inputs = input;
     last_z = weights * input;
-    last_z += biases;
+    
+    int N = input.get_cols();
+    for(int j = 0; j < N; ++j){
+        for(int i = 0; i < biases.get_rows(); ++i){
+            last_z(i, j) += biases(i, 0);
+        }
+    }
 
     Matrix output = last_z;
-    if (use_activation) {
+    if(use_activation){
         ReLU(output);
     }
     return output;
 }
+
 Matrix Layer::backward(const Matrix& grad_output, double learning_rate) {
+    int N = last_inputs.get_cols();
     Matrix delta = grad_output;
-    
-    if (use_activation) {
+
+    if(use_activation){
         ReLU_derivative(delta, last_z);
     }
-    
+
     Matrix grad_input = weights.transpose() * delta;
-    Matrix dw = delta * last_inputs.transpose();
-    
+    Matrix dw = (delta * last_inputs.transpose() * (1.0 / N));
+    Matrix db = delta.sum_cols() * (1.0 / N);
+
     weights -= (dw * learning_rate);
-    biases -= (delta * learning_rate);
-    
+    biases -= (db * learning_rate);
+
     return grad_input;
 }
 
